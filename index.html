@@ -3,15 +3,13 @@
 <h2>Control FPS with requestAnimationFrame</h2> 
 
 <label for="target">TargetFPS:</label>
-<input id="TargetFPS" type="range" min="1" max="60" value="30" oninput="inputTaregtFPS()" onchange="changeTaregtFPS()">
+<input id="TargetFPS" type="range" min="10" max="60" value="30" oninput="inputTaregtFPS()" onchange="changeTaregtFPS()">
 <label style="padding-right: 20px;" id="targetFPSLabel">30 FPS</label>
-<label for="independent">Uncapped FPS</label><input type="checkbox" checked></input>
 <br>
 <table>
     <tr>
-        <td style="width: 33%;"><label for="independent">FrameIndependent</label><input type="checkbox" checked></input></td>
-        <td style="width: 33%; padding: 10px;"><p id="fpsCounter" >fps:10</p></td>
-        <td style="width: 33%; padding: 10px;"><p id="frameTime">FrameTime: 16ms</p></td>
+        <td style="width: 50%;"><p id="fpsCounter" >fps:10</p></td>
+        <td style="width: 50%; padding: 10px;"><p id="frameTime">FrameTime: 16ms</p></td>
     </tr>
 </table>
 
@@ -26,7 +24,6 @@ var uncapped = false;
 var frameIndependent = false;
 var frameCounter  = document.getElementById("fpsCounter");
 var frameTime  = document.getElementById("frameTime");
-var fpsTarget = 30;
 
 function inputTaregtFPS(value)
 {
@@ -36,37 +33,60 @@ function inputTaregtFPS(value)
 function changeTaregtFPS()
 {
     fpsTarget = document.getElementById("TargetFPS").value;
+    fpsInterval =  1000 / fpsTarget;
 }
-////END-GUI//////git init
+////END-GUI//////
 
+var fpsTarget = 30;
+var fpsInterval =  1000 / fpsTarget;
 var lastTick = Date.now();
-var dt = 0;
+var startTime = lastTick;
+var elapsed;
+var delta;
+
+//ANIMATION
+var speed = 100;
+var direction =1;
 
 
 animate()
-function render(time)
+function render(dt)
 {
-    dt = (time-lastTick)/100;
-
-    if(dt>=(1/fpsTarget))
+    
+    frameTime.innerHTML = "FrameTime:"+dt.toFixed(3)+"ms";
+    
+    frameCounter.innerHTML = "FPS: "+(dt*fpsTarget*fpsTarget).toFixed(2);
+    
+    //RENDER
+    rect.style.left = rect.offsetLeft+((dt*speed)*direction);
+        
+    if(rect.offsetLeft > 200)
     {
-        lastTick = time;
+        rect.style.left = 200+"px";
+        direction = -1;
     }
 
-
-    console.log(dt , 1/fpsTarget)
-
-    frameTime.innerHTML = "FrameTime:"+dt+"ms";
-
-    frameCounter.innerHTML = "FPS: "+fpsTarget;
-
+    if(rect.offsetLeft < 10)
+    {
+        rect.style.left = 10+"px";
+        direction = 1;
+    }
 }
 
 // Animation loop
 function animate(){
+    
     requestAnimationFrame(animate);
-    // Render scene
-    render(Date.now());
+    elapsed = Date.now() - lastTick; 
+    // if enough time has elapsed, draw the next frame 
+    if (elapsed > fpsInterval) { 
+        
+        delta = (elapsed - (elapsed % fpsInterval));
+        lastTick += delta; 
+        
+        // Render scene
+        render(delta/1000);//deltatime in s 
+    }
 }
 
 
