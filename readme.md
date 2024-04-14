@@ -1,5 +1,3 @@
-### Control FPS with requestAnimationFrame
-
 <p align="center">
 <img src="media/Controll_Requestanimationframe_scr1.png"  border="2"/>
 </p>
