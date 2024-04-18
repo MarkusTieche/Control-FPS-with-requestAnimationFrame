@@ -13,6 +13,8 @@ var startTime = lastTick;
 var elapsed;
 var delta;
 
+animate(); //START ANIMATION
+
 function render(dt)
 {
    
